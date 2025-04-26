@@ -1,6 +1,7 @@
 *.local
 node_modules
 .venv
+*_venv
 __pycache__
 *.pyc
 output

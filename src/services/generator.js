@@ -1,12 +1,13 @@
 import { GENERATOR_URL } from "../constants.js";
 
-export const generateModel = (images) => fetch(`${GENERATOR_URL}/model/create`, {
+export const generateModel = (images) => fetch(`${GENERATOR_URL}`, {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
   body: JSON.stringify({
-    image1: images[0].data.toString('base64'),
-    image2: images[1].data.toString('base64'),
+    image1_path: images[0].tempFilePath,
+    image2_path: images[1].tempFilePath,
   })
 });

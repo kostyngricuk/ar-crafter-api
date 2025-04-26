@@ -1,22 +1,21 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, Response
 import os
+import logging
+from pydantic import BaseModel
 
-from services import get_encoded_model
+from services import get_model
 
-app = Flask(__name__)
+app = FastAPI()
 
-@app.route("/")
-def hello_world():
-    return "<p>AR Crafter - Model Generator!</p>"
+class ModelRequest(BaseModel):
+  image1_path: str
+  image2_path: str
 
-@app.route('/model/create', methods=['POST'])
-def generate():
-    data = request.get_json()
-    image1 = data.get('image1')
-    image2 = data.get('image2')
+@app.post('/')
+async def generate(request: ModelRequest):
+  image1_path = request.image1_path
+  image2_path = request.image2_path
 
-    encodedModel = get_encoded_model(image1, image2)
+  content = get_model(image1_path, image2_path)
 
-    return jsonify(encodedModel)
-
-app.run(host='0.0.0.0', port=5000)
+  return Response(content=content, media_type="model/gltf-binary")

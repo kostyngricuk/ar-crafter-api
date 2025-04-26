@@ -1,10 +1,19 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
+import cors from 'cors';
 
 import { generateModel } from './services/generator.js';
 import { HOST, PORT } from './constants.js';
+import { webStreamToNodeReadable } from './utils.js';
 
 const app = express();
+
+// Enable CORS for all routes
+app.use(cors({
+  origin: '*', // Allow all origins
+  methods: ['GET', 'POST'], // Allow GET and POST requests
+  allowedHeaders: ['Content-Type', 'Authorization'] // Allow specific headers
+}));
 
 app.use(fileUpload({
   // Configure file uploads with maximum file size 10MB
@@ -19,7 +28,7 @@ app.get('/', (req, res) => {
   res.send('AR Crafter API');
 });
 
-app.post('/model/create', async (req, res) => {
+app.post('/model/generate', async (req, res) => {
   try {
     const images = req.files.images;
     if (!images || images.length < 2) {
@@ -28,16 +37,17 @@ app.post('/model/create', async (req, res) => {
 
     const generatorResponse = await generateModel(images);
     if (generatorResponse.status !== 200) {
-      return res.status(500).send('Error generating 3D model');
+      return res.status(500).send('Error generating model');
     }
+
+    const nodeReadableStream = webStreamToNodeReadable(generatorResponse.body);
 
     // Send .glb back
     res.set('Content-Type', 'model/gltf-binary');
-    res.send(Buffer.from(generatorResponse.data, 'base64'));
-
+    nodeReadableStream.pipe(res);
   } catch (error) {
     console.error(error);
-    res.status(500).send(error.response.data || 'Internal Server Error');
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 });
 
