@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "dev-generator": "cd ./model-generator && ./run.sh"
+    "dev-generator": "cd ./model-generator && ./run.sh",
+    "docker-build": "docker compose build",
+    "docker-up": "docker compose up",
+    "docker-down": "docker compose down"
   },
   "dependencies": {
     "cors": "^2.8.5",

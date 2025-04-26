@@ -1,9 +1,14 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, Body
 import os
 import uuid
 from datetime import datetime
+from pydantic import BaseModel
 
-from generate import generate_model
+from .generate import generate_model
+
+class GenerateRequest(BaseModel):
+    image1_path: str
+    image2_path: str
 
 is_test_mode = False
 if os.getenv('TEST_MODE') == 'true':
@@ -30,6 +35,13 @@ def get_model(image1_path, image2_path):
     try:
         if not is_test_mode:
             generate_model(image1_path, image2_path, model_path)
+        else:
+            # In test mode, use a predefined model file
+            model_path = os.path.join(os.path.dirname(__file__), '../models/testModel.glb')
+            if not os.path.exists(model_path):
+                # Create an empty file for testing if it doesn't exist
+                with open(model_path, 'wb') as f:
+                    f.write(b'test model data')
 
         with open(model_path, 'rb') as f:
             res = f.read()
@@ -45,11 +57,11 @@ def get_model(image1_path, image2_path):
 
 app = FastAPI()
 
+@app.get('/')
+async def root():
+    return {"message": "Hello World"}
+
 @app.post('/generate')
-async def generate(request: dict):
-  image1_path: str = request.get("image1_path", "")
-  image2_path: str = request.get("image2_path", "")
-
-  content: bytes = get_model(image1_path, image2_path)
-
-  return Response(content=content, media_type="model/gltf-binary")
+async def generate(request: GenerateRequest):
+    content: bytes = get_model(request.image1_path, request.image2_path)
+    return Response(content=content, media_type="model/gltf-binary")
