@@ -25,3 +25,4 @@ services:
       - ./model-generator/src:/app/model-generator/src
       - ./model-generator/output:/app/model-generator//output
       - ./model-generator/models:/app/model-generator/models
+      - /tmp:/tmp
