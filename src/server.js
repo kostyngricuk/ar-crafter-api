@@ -36,8 +36,9 @@ app.post('/model/generate', async (req, res) => {
     }
 
     const generatorResponse = await generateModel(images);
+    console.log(generatorResponse);
     if (generatorResponse.status !== 200) {
-      return res.status(500).send('Error generating model');
+      return res.status(generatorResponse.status).json({ message: 'Error generating model', error: generatorResponse.statusText });
     }
 
     const nodeReadableStream = webStreamToNodeReadable(generatorResponse.body);

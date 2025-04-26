@@ -11,7 +11,7 @@ if os.getenv('TEST_MODE') == 'true':
 
 def generate_file_path(format='jpg'):
     if is_test_mode:
-        return os.path.join(os.path.dirname(__file__), '../', 'testModel.glb')
+        return os.path.join(os.path.dirname(__file__), '../models', 'testModel.glb')
 
     file_id = uuid.uuid4().hex[:10]
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -38,18 +38,18 @@ def get_model(image1_path, image2_path):
         print(f"Error during 3D model generation: {str(e)}")
 
     finally:
-        if os.path.exists(model_path) and not is_test_mode:
-          os.remove(model_path)
+        # if os.path.exists(model_path) and not is_test_mode:
+        #   os.remove(model_path)
 
         return res
 
 app = FastAPI()
 
-@app.post('/')
-async def generate(request):
-  image1_path = request.image1_path
-  image2_path = request.image2_path
+@app.post('/generate')
+async def generate(request: dict):
+  image1_path: str = request.get("image1_path", "")
+  image2_path: str = request.get("image2_path", "")
 
-  content = get_model(image1_path, image2_path)
+  content: bytes = get_model(image1_path, image2_path)
 
   return Response(content=content, media_type="model/gltf-binary")

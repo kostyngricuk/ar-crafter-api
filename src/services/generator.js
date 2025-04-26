@@ -1,6 +1,6 @@
 import { GENERATOR_URL } from "../constants.js";
 
-export const generateModel = (images) => fetch(`${GENERATOR_URL}`, {
+export const generateModel = (images) => fetch(`${GENERATOR_URL}/generate`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
