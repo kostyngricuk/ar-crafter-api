@@ -1,15 +1,12 @@
 # AR Crafter API
 
-There are **two servers**
-
-- NodeJS/Express server (contains all endpoint and communicates with Frontend)
-- Python/FastAPI server (using only for generation 3D models from uploaded images)
+Backend for AR Crafter service
 
 ## Run the project locally
 
-- Run the command `yarn docker-up`
+- Use the command `docker-compose up` for **Linux** and **Windows**
+- Use the command `docker compose up` for **MacOS**
 
-## Expose urls
+## Endpoint
 
-- `localhost:3000` for **Express**
-- `localhost:5000` for **FastAPI**
+- `GET localhost:3000` - Welcome page

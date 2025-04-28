@@ -2,7 +2,7 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
 
-import { generateModel } from './services/generator.js';
+// import { generateModel } from './services/generator.js';
 import { HOST, PORT } from './constants.js';
 import { webStreamToNodeReadable } from './utils.js';
 
@@ -35,15 +35,13 @@ app.post('/model/generate', async (req, res) => {
       return res.status(400).send('Two images are required');
     }
 
-    const generatorResponse = await generateModel(images);
-    console.log(generatorResponse);
-    if (generatorResponse.status !== 200) {
-      return res.status(generatorResponse.status).json({ message: 'Error generating model', error: generatorResponse.statusText });
-    }
+    // const generatorResponse = await generateModel(images);
+    // if (generatorResponse.status !== 200) {
+    //   return res.status(generatorResponse.status).json({ message: 'Error generating model', error: generatorResponse.statusText });
+    // }
 
     const nodeReadableStream = webStreamToNodeReadable(generatorResponse.body);
 
-    // Send .glb back
     res.set('Content-Type', 'model/gltf-binary');
     nodeReadableStream.pipe(res);
   } catch (error) {

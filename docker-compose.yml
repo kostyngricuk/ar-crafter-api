@@ -7,22 +7,8 @@ services:
       - NODE_ENV=development
       - HOST=0.0.0.0
       - PORT=3000
-      - GENERATOR_URL=http://model-generator:${GENERATOR_PORT:-5000}
+      - GENERATOR_URL=http://localhost:5000
     volumes:
       - ./src:/app/src
-      - /tmp:/tmp
     depends_on:
       - model-generator
-
-  model-generator:
-    build:
-      context: ./model-generator
-    ports:
-      - "${GENERATOR_PORT:-5000}:5000"
-    environment:
-      - TEST_MODE=false
-    volumes:
-      - ./model-generator/src:/app/model-generator/src
-      - ./model-generator/output:/app/model-generator//output
-      - ./model-generator/models:/app/model-generator/models
-      - /tmp:/tmp
